@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import initializeDatabase from "./db";
+import insertTransaction from "./seed";
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -13,6 +15,8 @@ const port = process.env.PORT || 3000;
  */
 const db = initializeDatabase();
 
+insertTransaction();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,13 +26,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the server! 🎉", rows });
 });
 
-//Endpoint to get all accounts by organization_id.
-app.get("/api/accounts/:organization_id", (req, res) => {
+//Endpoint to get all deals by organization_id. This is being done by joining the tables together so we can get all deals by organization_id (previous commit I had done accounts until I reread the challenge step 1.)
+app.get("/api/accounts/deals/:organization_id", (req, res) => {
   const { organization_id } = req.params;
 
   try {
     const accounts = db.prepare(`
-      SELECT * FROM accounts WHERE organization_id = ?;
+      SELECT deals.*
+      FROM deals
+      JOIN accounts ON deals.account_id = accounts.id
+      JOIN organizations ON accounts.organization_id = organizations.id
+      WHERE organizations.id = ?;
     `).all(organization_id);
 
     res.json(accounts);

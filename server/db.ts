@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 
 function initializeDatabase() {
-  const db = new Database("./database.sqlite", { verbose: console.log });
+  const db = new Database("./organizationsdatabase.sqlite", { verbose: console.log });
 
   db.pragma('foreign_keys = ON');
 
