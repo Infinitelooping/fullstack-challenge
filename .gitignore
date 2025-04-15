@@ -25,4 +25,3 @@ dist-ssr
 
 # Database
 database.sqlite
-server/organizationsdatabase.sqlite

@@ -1,62 +1,27 @@
-import Database from 'better-sqlite3';
-import { Organization, Account } from './types';
+import {Database} from "better-sqlite3";
 
-function getRandomInt(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+//New seeded data adding hardcoded data instead of randomly generating (Ended up being cleaner for testing purposes)
+function seedDatabase(db:Database) {
+  const orgAlpha = db.prepare("INSERT INTO organizations (name) VALUES (?)").run("Organization Alpha");
+  const orgBravo = db.prepare("INSERT INTO organizations (name) VALUES (?)").run("Organization Bravo");
+
+  const account1Alpha = db.prepare("INSERT INTO accounts (name, organization_id) VALUES (?, ?)").run("McDonald's", orgAlpha.lastInsertRowid);
+  const account2Alpha = db.prepare("INSERT INTO accounts (name, organization_id) VALUES (?, ?)").run("Burger King", orgAlpha.lastInsertRowid);
+
+  const account1Bravo = db.prepare("INSERT INTO accounts (name, organization_id) VALUES (?, ?)").run("KFC", orgBravo.lastInsertRowid);
+  const account2Bravo = db.prepare("INSERT INTO accounts (name, organization_id) VALUES (?, ?)").run("Wendy's", orgBravo.lastInsertRowid);
+
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("McDonald's - Big Mac Deal", account1Alpha.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-01-01', '2025-01-01');
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("McDonald's - Happy Meal Deal", account1Alpha.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-03-15', '2025-05-20');
+
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("Burger King - Whopper Deal", account2Alpha.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-05-01', '2025-06-15');
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("Burger King - King Fries Deal", account2Alpha.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-06-20', '2025-07-15');
+
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("KFC - Bucket Meal Deal", account1Bravo.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-02-01', '2025-02-28');
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("KFC - Zinger Deal", account1Bravo.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-04-10', '2025-03-15');
+
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("Wendy's - Baconator Deal", account2Bravo.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-07-01', '2025-04-30');
+  db.prepare("INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)").run("Wendy's - Frosty Deal", account2Bravo.lastInsertRowid, Math.floor(Math.random() * (100000 - 5000 + 1)) + 5000, '2024-08-15', '2025-09-30');
 }
 
-
-function getRandomDate(startYear: number, endYear: number) {
-    const startDate = new Date(`${startYear}-01-01`);
-    const endDate = new Date(`${endYear}-12-31`);
-    const randomTime = startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime());
-    return new Date(randomTime).toISOString().slice(0, 19).replace('T', ' ');
-}
-
-
-const db = new Database('./organizationsdatabase.sqlite', { verbose: console.log });
-
-
-const insertTransaction = db.transaction(() => {
-
-    const organizations = [
-        { name: 'Organization Alpha' },
-        { name: 'Organization Bravo' },
-    ];
-
-    organizations.forEach(({ name }) => {
-        db.prepare('INSERT INTO organizations (name) VALUES (?)').run(name);
-    });
-
-    const orgIds = db.prepare('SELECT id FROM organizations').all();
-
-    const accounts = [
-        //@ts-ignore
-        { name: 'McDonalds', organization_id: orgIds[0].id },
-        //@ts-ignore
-        { name: 'Burger King', organization_id: orgIds[0].id },
-        //@ts-ignore
-        { name: 'KFC', organization_id: orgIds[1].id },
-        //@ts-ignore
-        { name: 'Taco Bell', organization_id: orgIds[1].id },
-    ];
-
-    accounts.forEach(({ name, organization_id }) => {
-        db.prepare('INSERT INTO accounts (name, organization_id) VALUES (?, ?)').run(name, organization_id);
-    });
-
-    const accountIds = db.prepare('SELECT id, organization_id FROM accounts').all();
-    //@ts-ignore
-    accountIds.forEach(({ id, organization_id }) => {
-        const deals = [
-            { account_id: id, value: getRandomInt(5000, 100000), start_date: getRandomDate(2024, 2024), end_date: getRandomDate(2025, 2025), name: `Deal 1` },
-            { account_id: id, value: getRandomInt(5000, 100000), start_date: getRandomDate(2024, 2024), end_date: getRandomDate(2025, 2025), name: `Deal 2` }
-        ];
-
-        deals.forEach(({ account_id, value, start_date, end_date, name }) => {
-            db.prepare('INSERT INTO deals (name, account_id, value, start_date, end_date) VALUES (?, ?, ?, ?, ?)').run(name, account_id, value, start_date, end_date);
-        });
-    });
-});
-
-export default insertTransaction;
+export default seedDatabase;

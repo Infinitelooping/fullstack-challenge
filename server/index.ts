@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import initializeDatabase from "./db";
-import insertTransaction from "./seed";
+import seedDatabase from "./seed";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
  */
 const db = initializeDatabase();
 
-insertTransaction();
+seedDatabase(db);
 
 app.use(cors());
 app.use(express.json());
