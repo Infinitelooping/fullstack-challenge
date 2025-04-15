@@ -14,7 +14,7 @@ const getDealsByOrganization = async (organizationId: number) => {
 
 const DealPipeline = () => {
     const [deals, setDeals] = useState<Deal[]>([])
-    const organizationId = 3;
+    const organizationId = 1;
 
     useEffect(() => {
         getDealsByOrganization(organizationId)
@@ -30,7 +30,7 @@ const DealPipeline = () => {
     const pipeline = [{ status: 'Build Proposal', data: deals.filter((deal) => deal.status === 'build' ) }, { status: 'Pitch Proposal', data: deals.filter((deal) => deal.status === 'pitch' ) }, { status: 'Negotiation', data: deals.filter((deal) => deal.status === 'negotiation' ) }]
 
     return (
-        <div>
+        <div className="is-flex is-justify-content-center">
             {pipeline.map((step) =>
             <div key={step.status}>
                 <DealStep status={step.status} data={step.data} />

@@ -14,16 +14,16 @@ const DealStep = ({ status, data }: DealStepProps) => {
 
     return (
 
-        <div>
-            <div>
-                <h1>{status}</h1>
-                <span>{addValues()}</span>
+        <div className="box m-2">
+            <div className="is-flex is-align-items-center is-justify-content-space-between mb-3">
+                <h1 className="title is-4 mb-1">{status}</h1>
+                <span className="is-size-7">${addValues()}</span>
             </div>
             <ul>
                 {data.map((step) =>
-                    <li key={step.name}>
-                        <span>{step.name}</span>
-                        <span>{step.value}</span>
+                    <li className="box m-1 is-flex is-justify-content-space-between" key={step.name}>
+                        <span className="mr-2">{step.name}</span>
+                        <span>${step.value}</span>
                     </li>
                 )}
             </ul>
