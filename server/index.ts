@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import initializeDatabase from "./db";
 const app = express();
@@ -20,6 +20,23 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   const rows = db.prepare("SELECT * FROM organizations").all();
   res.json({ message: "Welcome to the server! 🎉", rows });
+});
+
+//Endpoint to get all accounts by organization_id.
+app.get("/api/accounts/:organization_id", (req, res) => {
+  const { organization_id } = req.params;
+
+  try {
+    const accounts = db.prepare(`
+      SELECT * FROM accounts WHERE organization_id = ?;
+    `).all(organization_id);
+
+    res.json(accounts);
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+
 });
 
 app.listen(port, () => {
