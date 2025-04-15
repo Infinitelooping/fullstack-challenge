@@ -29,7 +29,8 @@ app.get("/", (req, res) => {
 //Endpoint to get all deals by organization_id. This is being done by joining the tables together so we can get all deals by organization_id (previous commit I had done accounts until I reread the challenge step 1.)
 app.get("/api/accounts/deals/:organization_id", (req, res) => {
   const { organization_id } = req.params;
-
+  console.log(organization_id)
+  console.log('here')
   try {
     const accounts = db.prepare(`
       SELECT deals.*

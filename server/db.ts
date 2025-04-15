@@ -39,6 +39,7 @@ function initializeDatabase() {
       name TEXT NOT NULL,
       account_id INTEGER,
       value INTEGER,
+      status TEXT,
       start_date DATETIME,
       end_date DATETIME,
       FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
@@ -46,7 +47,6 @@ function initializeDatabase() {
   `
   ).run();
 
-  // TODO: Add your account and deal tables schemas here
   return db;
 }
 
